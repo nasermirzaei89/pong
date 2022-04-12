@@ -15,13 +15,13 @@ type player struct {
 	down      ebiten.Key
 }
 
-func (p *player) Update() error {
+func (p *player) Update(delta float64) error {
 	if ebiten.IsKeyPressed(p.up) {
-		p.positionY = math.Max(p.positionY-playerSpeed*ebiten.DefaultTPS/ebiten.CurrentTPS(), 0)
+		p.positionY = math.Max(p.positionY-playerSpeed*delta, 0)
 	}
 
 	if ebiten.IsKeyPressed(p.down) {
-		p.positionY = math.Min(p.positionY+playerSpeed*ebiten.DefaultTPS/ebiten.CurrentTPS(), screenHeight-540)
+		p.positionY = math.Min(p.positionY+playerSpeed*delta, screenHeight-540)
 	}
 
 	return nil

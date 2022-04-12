@@ -6,28 +6,34 @@ import (
 	"github.com/pkg/errors"
 	"image"
 	_ "image/png"
+	"time"
 )
 
 const (
 	screenWidth  = 3840
 	screenHeight = 2160
+	fps          = 60
 )
 
 var (
-	objects []object
-	score1  int
-	score2  int
+	objects       []object
+	score1        int
+	score2        int
+	lastUpdatedAt time.Time
 )
 
 type game struct{}
 
 func (g *game) Update() error {
+	delta := time.Since(lastUpdatedAt).Seconds() * fps
+	lastUpdatedAt = time.Now()
+
 	if !ebiten.IsFocused() {
 		return nil
 	}
 
 	for i := range objects {
-		err := objects[i].Update()
+		err := objects[i].Update(delta)
 		if err != nil {
 			return errors.Wrap(err, "error on update object")
 		}
@@ -93,6 +99,8 @@ func main() {
 
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("Pong")
+
+	lastUpdatedAt = time.Now()
 	if err := ebiten.RunGame(&game1); err != nil {
 		panic(errors.Wrap(err, "error on run game"))
 	}

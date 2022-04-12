@@ -13,8 +13,8 @@ type ball struct {
 	img       *ebiten.Image
 }
 
-func (b *ball) Update() error {
-	b.positionX += b.hSpeed * ebiten.DefaultTPS / ebiten.CurrentTPS()
+func (b *ball) Update(delta float64) error {
+	b.positionX += b.hSpeed * delta
 	if b.positionX <= -600 {
 		score2++
 		b.positionX = screenWidth / 2
@@ -34,7 +34,7 @@ func (b *ball) Update() error {
 		}
 	}
 
-	b.positionY = math.Min(math.Max(b.positionY+b.vSpeed*ebiten.DefaultTPS/ebiten.CurrentTPS(), 0), screenHeight-100)
+	b.positionY = math.Min(math.Max(b.positionY+b.vSpeed*delta, 0), screenHeight-100)
 	if b.positionY <= 0 || b.positionY >= screenHeight-100 {
 		b.vSpeed = -b.vSpeed
 	}

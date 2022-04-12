@@ -8,7 +8,7 @@ type scoreboard struct {
 	nums [10]*ebiten.Image
 }
 
-func (s *scoreboard) Update() error {
+func (s *scoreboard) Update(float64) error {
 	return nil
 }
 

@@ -5,6 +5,6 @@ import (
 )
 
 type object interface {
-	Update() error
+	Update(delta float64) error
 	Draw(screen *ebiten.Image)
 }
