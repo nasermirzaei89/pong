@@ -9,11 +9,12 @@ import (
 )
 
 const (
-	screenWidth     = 192
-	screenHeight    = 108
-	fps             = 60
-	movementSpeed   = 1
-	offScreenLength = 32
+	screenWidth    = 192
+	screenHeight   = 108
+	fps            = 60
+	movementSpeed  = 1
+	idleDuration   = time.Second
+	warmUpDuration = time.Second * 2
 )
 
 var (
@@ -57,6 +58,7 @@ func main() {
 		hSpeed:    movementSpeed,
 		vSpeed:    -movementSpeed,
 		img:       imageFromData(dataBall),
+		waitUntil: time.Now().Add(warmUpDuration + idleDuration),
 	}
 
 	hud = &HUD{nums: [10]*ebiten.Image{

@@ -2,6 +2,7 @@ package main
 
 import (
 	"math"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -12,6 +13,7 @@ type Ball struct {
 	hSpeed    float64
 	vSpeed    float64
 	img       *ebiten.Image
+	waitUntil time.Time
 }
 
 func (b *Ball) Width() float64 {
@@ -27,25 +29,34 @@ func (b *Ball) Height() float64 {
 }
 
 func (b *Ball) Update(delta float64) {
+	if time.Now().Before(b.waitUntil) {
+		return
+	}
+
 	b.translate(delta)
 	b.checkBounce()
 	b.checkStatus()
 }
 
 func (b *Ball) checkStatus() {
-	if b.positionX <= -b.Width()-offScreenLength {
+	if b.positionX <= -b.Width() {
 		score2++
 
-		b.positionX = screenWidth / 2
-		b.positionY = screenHeight / 2
+		b.resetPosition()
 	}
 
-	if b.positionX >= screenWidth+b.Width()+offScreenLength {
+	if b.positionX >= screenWidth+b.Width() {
 		score1++
 
-		b.positionX = screenWidth / 2
-		b.positionY = screenHeight / 2
+		b.resetPosition()
 	}
+}
+
+func (b *Ball) resetPosition() {
+	b.positionX = screenWidth / 2
+	b.positionY = screenHeight / 2
+
+	b.waitUntil = time.Now().Add(idleDuration)
 }
 
 func (b *Ball) checkBounce() {
