@@ -28,12 +28,12 @@ func (b *Ball) Height() float64 {
 	return float64(h)
 }
 
-func (b *Ball) Update(delta float64) {
+func (b *Ball) Update() {
 	if time.Now().Before(b.waitUntil) {
 		return
 	}
 
-	b.translate(delta)
+	b.translate()
 	b.checkBounce()
 	b.checkStatus()
 }
@@ -81,10 +81,10 @@ func collides(x1, y1, w1, h1, x2, y2, w2, h2 float64) bool {
 	return x1 < x2+w2 && x1+w1 > x2 && y1 < y2+h2 && y1+h1 > y2
 }
 
-func (b *Ball) translate(delta float64) {
-	b.positionX += b.hSpeed * delta
+func (b *Ball) translate() {
+	b.positionX += b.hSpeed
 
-	b.positionY = math.Min(math.Max(b.positionY+b.vSpeed*delta, 0), screenHeight-b.Height())
+	b.positionY = math.Min(math.Max(b.positionY+b.vSpeed, 0), screenHeight-b.Height())
 }
 
 func (b *Ball) Draw(screen *ebiten.Image) {

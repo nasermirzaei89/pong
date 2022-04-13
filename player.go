@@ -26,13 +26,13 @@ func (p *Player) Width() float64 {
 	return float64(w)
 }
 
-func (p *Player) Update(delta float64) {
+func (p *Player) Update() {
 	if ebiten.IsKeyPressed(p.up) {
-		p.positionY = math.Max(p.positionY-movementSpeed*delta, 0)
+		p.positionY = math.Max(p.positionY-movementSpeed, 0)
 	}
 
 	if ebiten.IsKeyPressed(p.down) {
-		p.positionY = math.Min(p.positionY+movementSpeed*delta, screenHeight-p.Height())
+		p.positionY = math.Min(p.positionY+movementSpeed, screenHeight-p.Height())
 	}
 }
 

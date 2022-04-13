@@ -11,7 +11,7 @@ import (
 const (
 	screenWidth    = 192
 	screenHeight   = 108
-	movementSpeed  = 60
+	movementSpeed  = 1
 	idleDuration   = time.Second
 	warmUpDuration = time.Second * 2
 )
@@ -26,8 +26,6 @@ var (
 	score2 int
 
 	gameColor = color.White
-
-	delta = 1.0 / ebiten.DefaultTPS
 )
 
 func main() {
@@ -75,6 +73,7 @@ func main() {
 
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("Pong")
+	ebiten.SetRunnableOnUnfocused(false)
 
 	if err := ebiten.RunGame(&game1); err != nil {
 		panic(errors.Wrap(err, "error on run game"))

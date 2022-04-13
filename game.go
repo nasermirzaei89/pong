@@ -7,13 +7,9 @@ import (
 type Game struct{}
 
 func (g *Game) Update() error {
-	if !ebiten.IsFocused() {
-		return nil
-	}
-
-	player1.Update(delta)
-	player2.Update(delta)
-	ball.Update(delta)
+	player1.Update()
+	player2.Update()
+	ball.Update()
 
 	return nil
 }
