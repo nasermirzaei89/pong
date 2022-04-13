@@ -11,8 +11,7 @@ import (
 const (
 	screenWidth    = 192
 	screenHeight   = 108
-	fps            = 60
-	movementSpeed  = 1
+	movementSpeed  = 60
 	idleDuration   = time.Second
 	warmUpDuration = time.Second * 2
 )

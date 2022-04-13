@@ -9,7 +9,7 @@ import (
 type Game struct{}
 
 func (g *Game) Update() error {
-	delta := time.Since(lastUpdatedAt).Seconds() * fps
+	delta := time.Since(lastUpdatedAt).Seconds()
 	lastUpdatedAt = time.Now()
 
 	if !ebiten.IsFocused() {
