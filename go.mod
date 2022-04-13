@@ -1,6 +1,6 @@
 module github.com/nasermirzaei89/pong
 
-go 1.18
+go 1.17
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.2.6

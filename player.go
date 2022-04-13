@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"math"
-)
 
-const playerSpeed = 32
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type player struct {
 	positionX float64
@@ -15,16 +14,26 @@ type player struct {
 	down      ebiten.Key
 }
 
-func (p *player) Update(delta float64) error {
+func (p *player) Height() float64 {
+	_, h := p.img.Size()
+
+	return float64(h)
+}
+
+func (p *player) Width() float64 {
+	w, _ := p.img.Size()
+
+	return float64(w)
+}
+
+func (p *player) Update(delta float64) {
 	if ebiten.IsKeyPressed(p.up) {
-		p.positionY = math.Max(p.positionY-playerSpeed*delta, 0)
+		p.positionY = math.Max(p.positionY-movementSpeed*delta, 0)
 	}
 
 	if ebiten.IsKeyPressed(p.down) {
-		p.positionY = math.Min(p.positionY+playerSpeed*delta, screenHeight-540)
+		p.positionY = math.Min(p.positionY+movementSpeed*delta, screenHeight-p.Height())
 	}
-
-	return nil
 }
 
 func (p *player) Draw(screen *ebiten.Image) {

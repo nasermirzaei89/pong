@@ -1,106 +1,82 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/pkg/errors"
-	"image"
-	_ "image/png"
+	"image/color"
 	"time"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/pkg/errors"
 )
 
 const (
-	screenWidth  = 3840
-	screenHeight = 2160
-	fps          = 60
+	screenWidth     = 192
+	screenHeight    = 108
+	fps             = 60
+	movementSpeed   = 1
+	offScreenLength = 32
 )
 
 var (
-	objects       []object
-	score1        int
-	score2        int
+	player1     *player
+	player2     *player
+	ball1       *ball
+	scoreboard1 *scoreboard
+
+	score1 int
+	score2 int
+
+	gameColor = color.White
+
 	lastUpdatedAt time.Time
 )
-
-type game struct{}
-
-func (g *game) Update() error {
-	delta := time.Since(lastUpdatedAt).Seconds() * fps
-	lastUpdatedAt = time.Now()
-
-	if !ebiten.IsFocused() {
-		return nil
-	}
-
-	for i := range objects {
-		err := objects[i].Update(delta)
-		if err != nil {
-			return errors.Wrap(err, "error on update object")
-		}
-	}
-
-	return nil
-}
-
-func (g *game) Draw(screen *ebiten.Image) {
-	for i := range objects {
-		objects[i].Draw(screen)
-	}
-}
-
-func (g *game) Layout(int, int) (int, int) {
-	return screenWidth, screenHeight
-}
 
 func main() {
 	game1 := game{}
 
-	img, _, err := ebitenutil.NewImageFromFile("sprites.png")
-	if err != nil {
-		panic(errors.Wrap(err, "error on new image from file"))
-	}
+	batImg := imageFromData(dataBat)
 
-	objects = append(objects, &player{
-		positionX: 16,
+	player1 = &player{
+		positionX: 1,
 		positionY: screenHeight / 2,
-		img:       img.SubImage(image.Rect(340, 0, 440, 540)).(*ebiten.Image),
+		img:       batImg,
 		up:        ebiten.KeyW,
 		down:      ebiten.KeyS,
-	})
+	}
 
-	objects = append(objects, &player{
-		positionX: screenWidth - 116,
+	player2 = &player{
+		positionX: screenWidth - 2,
 		positionY: screenHeight / 2,
-		img:       img.SubImage(image.Rect(440, 0, 540, 540)).(*ebiten.Image),
+		img:       batImg,
 		up:        ebiten.KeyUp,
 		down:      ebiten.KeyDown,
-	})
+	}
 
-	objects = append(objects, &ball{
+	ball1 = &ball{
 		positionX: screenWidth / 2,
 		positionY: screenHeight / 2,
-		hSpeed:    32,
-		vSpeed:    -32,
-		img:       img.SubImage(image.Rect(400, 560, 500, 660)).(*ebiten.Image),
-	})
+		hSpeed:    movementSpeed,
+		vSpeed:    -movementSpeed,
+		img:       imageFromData(dataBall),
+	}
 
-	objects = append(objects, &scoreboard{nums: [10]*ebiten.Image{
-		img.SubImage(image.Rect(192, 628, 259, 727)).(*ebiten.Image),
-		img.SubImage(image.Rect(39, 20, 104, 119)).(*ebiten.Image),
-		img.SubImage(image.Rect(24, 140, 115, 255)).(*ebiten.Image),
-		img.SubImage(image.Rect(44, 271, 112, 400)).(*ebiten.Image),
-		img.SubImage(image.Rect(40, 416, 128, 520)).(*ebiten.Image),
-		img.SubImage(image.Rect(43, 544, 124, 660)).(*ebiten.Image),
-		img.SubImage(image.Rect(156, 24, 232, 147)).(*ebiten.Image),
-		img.SubImage(image.Rect(155, 168, 251, 291)).(*ebiten.Image),
-		img.SubImage(image.Rect(179, 307, 259, 455)).(*ebiten.Image),
-		img.SubImage(image.Rect(183, 480, 259, 603)).(*ebiten.Image),
-	}})
+	scoreboard1 = &scoreboard{nums: [10]*ebiten.Image{
+		imageFromData(dataNumber0),
+		imageFromData(dataNumber1),
+		imageFromData(dataNumber2),
+		imageFromData(dataNumber3),
+		imageFromData(dataNumber4),
+		imageFromData(dataNumber5),
+		imageFromData(dataNumber6),
+		imageFromData(dataNumber7),
+		imageFromData(dataNumber8),
+		imageFromData(dataNumber9),
+	}}
 
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("Pong")
 
 	lastUpdatedAt = time.Now()
+
 	if err := ebiten.RunGame(&game1); err != nil {
 		panic(errors.Wrap(err, "error on run game"))
 	}

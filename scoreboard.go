@@ -8,14 +8,9 @@ type scoreboard struct {
 	nums [10]*ebiten.Image
 }
 
-func (s *scoreboard) Update(float64) error {
-	return nil
-}
-
 func (s *scoreboard) Draw(screen *ebiten.Image) {
-	s.drawScore(screen, score1, screenWidth/2-400, 100)
-	s.drawScore(screen, score2, screenWidth/2+400, 100)
-
+	s.drawScore(screen, score1, screenWidth/4, 3)
+	s.drawScore(screen, score2, screenWidth*3/4, 3)
 }
 
 func (s *scoreboard) drawScore(screen *ebiten.Image, score, x, y int) {
@@ -27,10 +22,13 @@ func (s *scoreboard) drawScore(screen *ebiten.Image, score, x, y int) {
 			Filter:        0,
 		}
 
+		w, _ := s.nums[score%10].Size()
+		x -= w + 1
+
 		opts.GeoM.Translate(float64(x), float64(y))
 
 		screen.DrawImage(s.nums[score%10], &opts)
-		x -= 100
+
 		score /= 10
 		if score == 0 {
 			break
