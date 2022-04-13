@@ -27,7 +27,7 @@ var (
 
 	gameColor = color.White
 
-	lastUpdatedAt time.Time
+	delta = 1.0 / ebiten.DefaultTPS
 )
 
 func main() {
@@ -75,8 +75,6 @@ func main() {
 
 	ebiten.SetWindowResizable(true)
 	ebiten.SetWindowTitle("Pong")
-
-	lastUpdatedAt = time.Now()
 
 	if err := ebiten.RunGame(&game1); err != nil {
 		panic(errors.Wrap(err, "error on run game"))
