@@ -1,6 +1,6 @@
 #@IgnoreInspection BashAddShebang
 export ROOT=$(realpath $(dir $(lastword $(MAKEFILE_LIST))))
-export CGO_ENABLED=1
+export CGO_ENABLED=0
 export GO111MODULE=on
 
 .DEFAULT_GOAL := .default
@@ -27,15 +27,22 @@ format: .which-go .which-goimports ## Formats Go files
 
 .PHONY: lint
 lint: .which-lint ## Checks code with Golang CI Lint
-	golangci-lint run
+	CGO_ENABLED=1 golangci-lint run
 
 .PHONY: build
-build: .which-go ## Builds game
-	go build -v -o $(ROOT)/pong -ldflags="-s -w" $(ROOT)/*.go
+build: build-darwin build-windows build-wasm
+
+.PHONY: build-darwin
+build-darwin: .which-go ## Builds game for macOS
+	CGO_ENABLED=1 GOOS=darwin go build -v -o $(ROOT)/pong -ldflags="-s -w" $(ROOT)/*.go
+
+.PHONY: build-linux
+build-linux: .which-go ## Builds game for linux FIXME: doesn't work
+	CGO_ENABLED=1 GOOS=linux go build -v -o $(ROOT)/pong -ldflags="-s -w" $(ROOT)/*.go
 
 .PHONY: build-windows
 build-windows: .which-go ## Builds game for windows
-	GOOS=windows go build -v -o $(ROOT)/pong.exe -ldflags="-s -w" $(ROOT)/*.go
+	GOOS=windows go build -v -o $(ROOT)/pong.exe $(ROOT)/*.go
 
 .PHONY: build-wasm
 build-wasm: .which-go ## Builds WASM
@@ -44,5 +51,5 @@ build-wasm: .which-go ## Builds WASM
 
 .PHONY: test
 test: .which-go ## Tests go files
-	go test -coverpkg=./... -race -coverprofile=./coverage.txt -covermode=atomic $(ROOT)/...
+	CGO_ENABLED=1 go test -coverpkg=./... -race -coverprofile=./coverage.txt -covermode=atomic $(ROOT)/...
 	go tool cover -func coverage.txt
