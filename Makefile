@@ -45,7 +45,7 @@ build-windows: .which-go ## Builds game for windows
 	GOOS=windows go build -v -o $(ROOT)/pong.exe $(ROOT)/*.go
 
 .PHONY: build-wasm
-build-wasm: .which-go ## Builds WASM
+build-wasm: .which-go ## Builds game for Browser
 	GOOS=js GOARCH=wasm go build -o pong.wasm .
 	cp $$(go env GOROOT)/misc/wasm/wasm_exec.js .
 
