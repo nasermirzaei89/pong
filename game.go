@@ -4,12 +4,11 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type game struct{}
+type Game struct{}
 
-func (g *game) Update() error {
+func (g *Game) Update() error {
 	delta := time.Since(lastUpdatedAt).Seconds() * fps
 	lastUpdatedAt = time.Now()
 
@@ -19,20 +18,18 @@ func (g *game) Update() error {
 
 	player1.Update(delta)
 	player2.Update(delta)
-	ball1.Update(delta)
+	ball.Update(delta)
 
 	return nil
 }
 
-func (g *game) Draw(screen *ebiten.Image) {
-	ebitenutil.DrawLine(screen, 0, 0, screenWidth, 0, gameColor)
-	ebitenutil.DrawLine(screen, 0, screenHeight-1, screenWidth, screenHeight-1, gameColor)
+func (g *Game) Draw(screen *ebiten.Image) {
 	player1.Draw(screen)
 	player2.Draw(screen)
-	ball1.Draw(screen)
-	scoreboard1.Draw(screen)
+	ball.Draw(screen)
+	hud.Draw(screen)
 }
 
-func (g *game) Layout(int, int) (int, int) {
+func (g *Game) Layout(int, int) (int, int) {
 	return screenWidth, screenHeight
 }

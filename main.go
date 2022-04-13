@@ -17,10 +17,10 @@ const (
 )
 
 var (
-	player1     *player
-	player2     *player
-	ball1       *ball
-	scoreboard1 *scoreboard
+	player1 *Player
+	player2 *Player
+	ball    *Ball
+	hud     *HUD
 
 	score1 int
 	score2 int
@@ -31,11 +31,11 @@ var (
 )
 
 func main() {
-	game1 := game{}
+	game1 := Game{}
 
 	batImg := imageFromData(dataBat)
 
-	player1 = &player{
+	player1 = &Player{
 		positionX: 1,
 		positionY: screenHeight / 2,
 		img:       batImg,
@@ -43,7 +43,7 @@ func main() {
 		down:      ebiten.KeyS,
 	}
 
-	player2 = &player{
+	player2 = &Player{
 		positionX: screenWidth - 2,
 		positionY: screenHeight / 2,
 		img:       batImg,
@@ -51,7 +51,7 @@ func main() {
 		down:      ebiten.KeyDown,
 	}
 
-	ball1 = &ball{
+	ball = &Ball{
 		positionX: screenWidth / 2,
 		positionY: screenHeight / 2,
 		hSpeed:    movementSpeed,
@@ -59,7 +59,7 @@ func main() {
 		img:       imageFromData(dataBall),
 	}
 
-	scoreboard1 = &scoreboard{nums: [10]*ebiten.Image{
+	hud = &HUD{nums: [10]*ebiten.Image{
 		imageFromData(dataNumber0),
 		imageFromData(dataNumber1),
 		imageFromData(dataNumber2),
