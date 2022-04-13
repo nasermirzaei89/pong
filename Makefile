@@ -14,6 +14,9 @@ help: ## Shows help
 .which-go:
 	@which go > /dev/null || (echo "install go from https://golang.org/dl/" & exit 1)
 
+.which-ebitenmobile:
+	@which ebitenmobile > /dev/null || (echo "install go from https://ebiten.org/documents/mobile.html" & exit 1)
+
 .which-goimports:
 	@which goimports > /dev/null || (echo "install goimports from https://pkg.go.dev/golang.org/x/tools/cmd/goimports" & exit 1)
 
@@ -48,6 +51,10 @@ build-windows: .which-go ## Builds game for windows
 build-wasm: .which-go ## Builds game for Browser
 	GOOS=js GOARCH=wasm go build -o pong.wasm .
 	cp $$(go env GOROOT)/misc/wasm/wasm_exec.js .
+
+.PHONY: build-android
+build-android: .which-ebitenmobile ## Builds game for Android
+	ebitenmobile bind -target android -javapkg net.nasermirzaei89.pong -o ./pong.aar ./mobile
 
 .PHONY: test
 test: .which-go ## Tests go files
