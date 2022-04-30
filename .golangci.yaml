@@ -11,7 +11,4 @@ linters:
     - golint # deprecated
     - maligned # deprecated
     - interfacer # deprecated
-    - lll
     - gomnd
-    - varnamelen
-    - gochecknoglobals

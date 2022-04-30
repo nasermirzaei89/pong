@@ -5,19 +5,19 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type HUD struct {
+type hud struct {
 	nums [10]*ebiten.Image
 }
 
-func (s *HUD) Draw(screen *ebiten.Image) {
-	ebitenutil.DrawLine(screen, 0, 0, screenWidth, 0, gameColor)
-	ebitenutil.DrawLine(screen, 0, screenHeight-1, screenWidth, screenHeight-1, gameColor)
+func (s *hud) Draw(g *Game, screen *ebiten.Image) {
+	ebitenutil.DrawLine(screen, 0, 0, screenWidth, 0, g.gameColor)
+	ebitenutil.DrawLine(screen, 0, screenHeight-1, screenWidth, screenHeight-1, g.gameColor)
 
-	s.drawScore(screen, score1, screenWidth*.25, 3)
-	s.drawScore(screen, score2, screenWidth*.75, 3)
+	s.drawScore(screen, g.score1, screenWidth*.25, 3)
+	s.drawScore(screen, g.score2, screenWidth*.75, 3)
 }
 
-func (s *HUD) drawScore(screen *ebiten.Image, score, x, y int) {
+func (s *hud) drawScore(screen *ebiten.Image, score, positionX, positionY int) {
 	for {
 		opts := ebiten.DrawImageOptions{
 			GeoM:          ebiten.GeoM{},
@@ -27,9 +27,9 @@ func (s *HUD) drawScore(screen *ebiten.Image, score, x, y int) {
 		}
 
 		w, _ := s.nums[score%10].Size()
-		x -= w + 1
+		positionX -= w + 1
 
-		opts.GeoM.Translate(float64(x), float64(y))
+		opts.GeoM.Translate(float64(positionX), float64(positionY))
 
 		screen.DrawImage(s.nums[score%10], &opts)
 

@@ -2,12 +2,13 @@ package pong
 
 import (
 	"math"
+	"math/rand"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Ball struct {
+type ball struct {
 	positionX float64
 	positionY float64
 	hSpeed    float64
@@ -16,64 +17,73 @@ type Ball struct {
 	waitUntil time.Time
 }
 
-func (b *Ball) Width() float64 {
-	w, _ := b.img.Size()
+func (obj *ball) Width() float64 {
+	w, _ := obj.img.Size()
 
 	return float64(w)
 }
 
-func (b *Ball) Height() float64 {
-	_, h := b.img.Size()
+func (obj *ball) Height() float64 {
+	_, h := obj.img.Size()
 
 	return float64(h)
 }
 
-func (b *Ball) Update() {
-	if time.Now().Before(b.waitUntil) {
+func (obj *ball) Update(game *Game) {
+	if time.Now().Before(obj.waitUntil) {
 		return
 	}
 
-	b.translate()
-	b.checkBounce()
-	b.checkStatus()
+	obj.translate()
+	obj.checkBounce(game)
+	obj.checkStatus(game)
 }
 
-func (b *Ball) checkStatus() {
-	if b.positionX <= -b.Width() {
-		score2++
+func (obj *ball) checkStatus(game *Game) {
+	if obj.positionX <= -obj.Width() {
+		game.score2++
 
-		b.resetPosition()
+		obj.resetPosition(time.Now().Add(idleDuration))
 	}
 
-	if b.positionX >= screenWidth+b.Width() {
-		score1++
+	if obj.positionX >= screenWidth+obj.Width() {
+		game.score1++
 
-		b.resetPosition()
+		obj.resetPosition(time.Now().Add(idleDuration))
 	}
 }
 
-func (b *Ball) resetPosition() {
-	b.positionX = screenWidth / 2
-	b.positionY = screenHeight / 2
+func (obj *ball) resetPosition(waitUntil time.Time) {
+	obj.positionX = screenWidth / 2
+	obj.positionY = screenHeight / 2
 
-	b.waitUntil = time.Now().Add(idleDuration)
+	obj.hSpeed = float64(movementSpeed * randomize())
+	obj.vSpeed = float64(movementSpeed * randomize())
+
+	obj.waitUntil = waitUntil
 }
 
-func (b *Ball) checkBounce() {
-	if collides(b.positionX, b.positionY, b.Width(), b.Height(), player1.positionX, player1.positionY, player1.Width(), player1.Height()) {
-		b.hSpeed = math.Abs(b.hSpeed)
+func (obj *ball) checkBounce(game *Game) {
+	if collides(
+		obj.positionX, obj.positionY, obj.Width(), obj.Height(),
+		game.player1.positionX, game.player1.positionY, game.player1.Width(), game.player1.Height(),
+	) {
+		obj.hSpeed = math.Abs(obj.hSpeed)
 	}
 
-	if collides(b.positionX, b.positionY, b.Width(), b.Height(), player2.positionX, player2.positionY, player2.Width(), player2.Height()) {
-		b.hSpeed = -math.Abs(b.hSpeed)
+	if collides(
+		obj.positionX, obj.positionY, obj.Width(), obj.Height(),
+		game.player2.positionX, game.player2.positionY, game.player2.Width(), game.player2.Height(),
+	) {
+		obj.hSpeed = -math.Abs(obj.hSpeed)
 	}
 
-	if b.positionY <= 0 {
-		b.vSpeed = math.Abs(b.vSpeed)
+	if obj.positionY <= 0 {
+		obj.vSpeed = math.Abs(obj.vSpeed)
 	}
 
-	if b.positionY >= screenHeight-b.Height() {
-		b.vSpeed = -math.Abs(b.vSpeed)
+	if obj.positionY >= screenHeight-obj.Height() {
+		obj.vSpeed = -math.Abs(obj.vSpeed)
 	}
 }
 
@@ -81,13 +91,13 @@ func collides(x1, y1, w1, h1, x2, y2, w2, h2 float64) bool {
 	return x1 < x2+w2 && x1+w1 > x2 && y1 < y2+h2 && y1+h1 > y2
 }
 
-func (b *Ball) translate() {
-	b.positionX += b.hSpeed
+func (obj *ball) translate() {
+	obj.positionX += obj.hSpeed
 
-	b.positionY = math.Min(math.Max(b.positionY+b.vSpeed, 0), screenHeight-b.Height())
+	obj.positionY = math.Min(math.Max(obj.positionY+obj.vSpeed, 0), screenHeight-obj.Height())
 }
 
-func (b *Ball) Draw(screen *ebiten.Image) {
+func (obj *ball) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{
 		GeoM:          ebiten.GeoM{},
 		ColorM:        ebiten.ColorM{},
@@ -95,7 +105,15 @@ func (b *Ball) Draw(screen *ebiten.Image) {
 		Filter:        0,
 	}
 
-	opts.GeoM.Translate(b.positionX, b.positionY)
+	opts.GeoM.Translate(obj.positionX, obj.positionY)
 
-	screen.DrawImage(b.img, &opts)
+	screen.DrawImage(obj.img, &opts)
+}
+
+func randomize() int {
+	if rand.New(rand.NewSource(time.Now().UnixNano())).Intn(2) == 0 { //nolint:gosec
+		return -1
+	}
+
+	return 1
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+//nolint:gochecknoglobals
 var (
 	dataNumber0 = [][]bool{
 		{true, true, true, true},
@@ -90,7 +91,7 @@ var (
 	}
 )
 
-func imageFromData(data [][]bool) *ebiten.Image {
+func (g *Game) imageFromData(data [][]bool) *ebiten.Image {
 	h := len(data)
 	w := len(data[0])
 	img := ebiten.NewImage(w, h)
@@ -98,7 +99,7 @@ func imageFromData(data [][]bool) *ebiten.Image {
 	for y := range data {
 		for x := range data[y] {
 			if data[y][x] {
-				img.Set(x, y, gameColor)
+				img.Set(x, y, g.gameColor)
 			}
 		}
 	}

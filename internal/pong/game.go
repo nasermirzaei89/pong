@@ -15,33 +15,31 @@ const (
 	warmUpDuration = time.Second * 2
 )
 
-var (
-	player1 *Player
-	player2 *Player
-	ball    *Ball
-	hud     *HUD
+type Game struct {
+	player1 *player
+	player2 *player
+	ball1   *ball
+	hud1    *hud
 
 	score1 int
 	score2 int
 
-	gameColor = color.White
-)
-
-type Game struct{}
+	gameColor color.Color
+}
 
 func (g *Game) Update() error {
-	player1.Update()
-	player2.Update()
-	ball.Update()
+	g.player1.Update()
+	g.player2.Update()
+	g.ball1.Update(g)
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	player1.Draw(screen)
-	player2.Draw(screen)
-	ball.Draw(screen)
-	hud.Draw(screen)
+	g.player1.Draw(screen)
+	g.player2.Draw(screen)
+	g.ball1.Draw(screen)
+	g.hud1.Draw(g, screen)
 }
 
 func (g *Game) Layout(int, int) (int, int) {
@@ -49,11 +47,13 @@ func (g *Game) Layout(int, int) (int, int) {
 }
 
 func New() *Game {
-	game1 := Game{}
+	game1 := new(Game)
 
-	batImg := imageFromData(dataBat)
+	game1.gameColor = color.White
 
-	player1 = &Player{
+	batImg := game1.imageFromData(dataBat)
+
+	game1.player1 = &player{
 		positionX: 1,
 		positionY: screenHeight / 2,
 		img:       batImg,
@@ -61,7 +61,7 @@ func New() *Game {
 		down:      ebiten.KeyS,
 	}
 
-	player2 = &Player{
+	game1.player2 = &player{
 		positionX: screenWidth - 2,
 		positionY: screenHeight / 2,
 		img:       batImg,
@@ -69,31 +69,22 @@ func New() *Game {
 		down:      ebiten.KeyDown,
 	}
 
-	ball = &Ball{
-		positionX: screenWidth / 2,
-		positionY: screenHeight / 2,
-		hSpeed:    movementSpeed,
-		vSpeed:    -movementSpeed,
-		img:       imageFromData(dataBall),
-		waitUntil: time.Now().Add(warmUpDuration + idleDuration),
-	}
+	game1.ball1 = new(ball)
+	game1.ball1.img = game1.imageFromData(dataBall)
+	game1.ball1.resetPosition(time.Now().Add(warmUpDuration + idleDuration))
 
-	hud = &HUD{nums: [10]*ebiten.Image{
-		imageFromData(dataNumber0),
-		imageFromData(dataNumber1),
-		imageFromData(dataNumber2),
-		imageFromData(dataNumber3),
-		imageFromData(dataNumber4),
-		imageFromData(dataNumber5),
-		imageFromData(dataNumber6),
-		imageFromData(dataNumber7),
-		imageFromData(dataNumber8),
-		imageFromData(dataNumber9),
+	game1.hud1 = &hud{nums: [10]*ebiten.Image{
+		game1.imageFromData(dataNumber0),
+		game1.imageFromData(dataNumber1),
+		game1.imageFromData(dataNumber2),
+		game1.imageFromData(dataNumber3),
+		game1.imageFromData(dataNumber4),
+		game1.imageFromData(dataNumber5),
+		game1.imageFromData(dataNumber6),
+		game1.imageFromData(dataNumber7),
+		game1.imageFromData(dataNumber8),
+		game1.imageFromData(dataNumber9),
 	}}
 
-	ebiten.SetWindowResizable(true)
-	ebiten.SetWindowTitle("Pong")
-	ebiten.SetRunnableOnUnfocused(false)
-
-	return &game1
+	return game1
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type Player struct {
+type player struct {
 	positionX float64
 	positionY float64
 	img       *ebiten.Image
@@ -14,19 +14,19 @@ type Player struct {
 	down      ebiten.Key
 }
 
-func (p *Player) Height() float64 {
+func (p *player) Height() float64 {
 	_, h := p.img.Size()
 
 	return float64(h)
 }
 
-func (p *Player) Width() float64 {
+func (p *player) Width() float64 {
 	w, _ := p.img.Size()
 
 	return float64(w)
 }
 
-func (p *Player) Update() {
+func (p *player) Update() {
 	if ebiten.IsKeyPressed(p.up) {
 		p.positionY = math.Max(p.positionY-movementSpeed, 0)
 	}
@@ -36,7 +36,7 @@ func (p *Player) Update() {
 	}
 }
 
-func (p *Player) Draw(screen *ebiten.Image) {
+func (p *player) Draw(screen *ebiten.Image) {
 	opts := ebiten.DrawImageOptions{
 		GeoM:          ebiten.GeoM{},
 		ColorM:        ebiten.ColorM{},
